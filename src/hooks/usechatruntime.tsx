@@ -235,11 +235,13 @@ export const useChatRuntime = ({
                       ? { ...tc, status: "interrupted" as const }
                       : tc,
                   );
+                  
                   return { ...m, toolCalls };
                 }),
               );
               // Surface the popup — isRunning stays true (graph is paused, not done)
               setPendingInterrupt(event as unknown as InterruptPayload);
+              console.log("Pending interrupt : " , event)
               break; // stop reading; resume will open a new SSE stream
             } else if (event.type === "tool_start") {
               const newTool: ToolCall = {
@@ -462,6 +464,7 @@ interface SSEEvent {
   content: string;
   tool?: string;
   input?: Record<string, unknown>;
+  value?: Record<string, unknown>;
 }
 
 function parseSSEEvent(raw: string): SSEEvent | null {
@@ -481,6 +484,14 @@ function parseSSEEvent(raw: string): SSEEvent | null {
 
   try {
     const parsed = JSON.parse(dataStr);
+    console.log("Parsed content in the parseSSEEvent function : ",parsed)
+    if (parsed.type === "interrupt"){
+      return {
+        type : "interrupt",
+        content : "",
+        value : parsed.value
+      }
+    }
     return {
       type: parsed.type ?? type,
       content: parsed.content != null ? String(parsed.content) : "",

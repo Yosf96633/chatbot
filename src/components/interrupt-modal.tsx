@@ -24,6 +24,7 @@ export function InterruptModal({ interrupt, onDecision }: InterruptModalProps) {
   if (!interrupt) return null;
 
   const { value } = interrupt;
+  console.log(`value -> ${JSON.stringify(interrupt)}`)
   return (
     <>
       {/* Backdrop */}
@@ -73,7 +74,7 @@ export function InterruptModal({ interrupt, onDecision }: InterruptModalProps) {
         {/* Question */}
         <div className="px-6 py-4">
           <p className="text-sm font-medium text-foreground">
-            {value.question ?? "Do you want to proceed?"}
+            {value?.question ?? "Do you want to proceed?"}
           </p>
         </div>
 
