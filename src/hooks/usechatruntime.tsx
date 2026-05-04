@@ -166,6 +166,7 @@ export const useChatRuntime = ({
 
   const onNew = useCallback(
     async (message: AppendMessage) => {
+      const user_id = localStorage.getItem("user_id")
       const userText = message.content
         .filter((c) => c.type === "text")
         .map((c) => (c as { type: "text"; text: string }).text)
@@ -196,7 +197,7 @@ export const useChatRuntime = ({
         const response = await fetch(`${API_URL}/api/v1/chat/completions`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ thread_id: threadId, query: userText }),
+          body: JSON.stringify({ thread_id: threadId, query: userText , user_id }),
         });
 
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -484,7 +485,6 @@ function parseSSEEvent(raw: string): SSEEvent | null {
 
   try {
     const parsed = JSON.parse(dataStr);
-    console.log("Parsed content in the parseSSEEvent function : ",parsed)
     if (parsed.type === "interrupt"){
       return {
         type : "interrupt",
